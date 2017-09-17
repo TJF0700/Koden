@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <sectionGroup name="KodenGroup" xdt:Transform="InsertIfMissing" >
+       <section name="FTP" type="Koden.Utils.FTPClient.ConfigFileSections.FTPSection,Koden.Utils.FTPClient" allowLocation="true" allowDefinition="Everywhere"  xdt:Transform="InsertIfMissing" />
+    </sectionGroup>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  <KodenGroup xdt:Transform="InsertIfMissing">
+    <FTP xdt:Transform="InsertIfMissing">
+      <FTPServers xdt:Transform="InsertIfMissing">
+        <!--Can have multiple servers listed!-->
+        <FTPServer name="GRS_SFTPServer" host="secureftp.####.com" userid="fortis" password="######" localdir="p:\staging\test"  xdt:Transform="InsertIfMissing" />
+        <FTPServer name="PCC_SFTPServer" host="ftpus.####.com" userid="fmgftpuser" password="####" localdir="p:\staging\RecursiveSFTP"  xdt:Transform="InsertIfMissing" />
+      </FTPServers>
+    </FTP>
+  </KodenGroup>
+</configuration>

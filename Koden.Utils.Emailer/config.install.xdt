@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <sectionGroup name="KodenGroup" xdt:Transform="InsertIfMissing" >
+      <section name="Emailer" type=" Koden.Utils.Emailer.ConfigFileSections.EmailerSection,Koden.Utils.Emailer" allowLocation="true" allowDefinition="Everywhere" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)"  />
+    </sectionGroup>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  
+  <KodenGroup xdt:Transform="InsertIfMissing">
+    <Emailer xdt:Transform="InsertIfMissing">
+      <SMTPServer hostname="mail.mailserver.com" xdt:Transform="InsertIfMissing" />
+      <DebugMsg enabled="true" from="_ETLNotify@mailserver.com" to="noone@mailserver.com" attachLog="true" xdt:Transform="InsertIfMissing" />
+      <SuccessMsg enabled="false" from="_ETLNotify@mailserver.com" to="noone@mailserver.com" attachLog="false" xdt:Transform="InsertIfMissing"/>
+      <FailureMsg enabled="true" from="_ETLNotify@mailserver.com" to="noone@mailserver.com" cc="noone@mailserver.com" attachLog="true" xdt:Transform="InsertIfMissing"/>
+    </Emailer>
+  </KodenGroup>
+</configuration>

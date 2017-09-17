@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Koden.Utils.Emailer</id>
+    <version>$version$</version>
+    <title>Koden Common Utils - Emailer</title>
+    <authors>Tim Fischer</authors>
+    <owners>Koden Dev</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Koden Utilities for emailing</description>
+    <releaseNotes>Exception handling modified.  Documentation</releaseNotes>
+    <copyright>Koden</copyright>
+    <dependencies>
+      <group>
+        <dependency id="Newtonsoft.Json" version="(9.0,11.0)" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="config.install.xdt" target="content\app.config.install.xdt" />
+  </files>
+</package>

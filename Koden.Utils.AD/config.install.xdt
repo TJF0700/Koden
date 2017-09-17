@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <sectionGroup name="KodenGroup" xdt:Transform="InsertIfMissing" >
+      <section name="AD" type="Koden.Utils.ConfigFileSections.ADSection,Koden.Utils.AD" allowLocation="true" allowDefinition="Everywhere"  xdt:Transform="InsertIfMissing" />
+    </sectionGroup>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+
+  <KodenGroup xdt:Transform="InsertIfMissing">
+    <AD xdt:Transform="InsertIfMissing">
+      <Domains xdt:Transform="InsertIfMissing">
+        <Domain name="Koden" LDAPRoot="LDAP://{0}OU=Server,DC=Company,DC=com" userid="Current" password="" OU="OU=Users," xdt:Transform="InsertIfMissing"  />
+      </Domains>
+    </AD>
+  </KodenGroup>
+</configuration>

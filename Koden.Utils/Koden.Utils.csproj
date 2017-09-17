@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FCE6BEB3-4816-4DEB-B5A7-1EE551093ACF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Koden.Utils</RootNamespace>
+    <AssemblyName>Koden.Utils</AssemblyName>
+    <TargetFrameworkVersions>v4.5,v4.6</TargetFrameworkVersions>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Koden.Utils.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Koden.Utils.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\QA\Koden.Utils.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\UAT\Koden.Utils.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEV|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DEV\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\Koden.Utils.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\kColumnOrderAttribute.cs" />
+    <Compile Include="CoreExtensions\kEnumExtensions.cs" />
+    <Compile Include="CoreExtensions\kStringExtensions.cs" />
+    <Compile Include="Interfaces\IEmailer.cs" />
+    <Compile Include="Interfaces\ILogger.cs" />
+    <Compile Include="Interfaces\IMailHeader.cs" />
+    <Compile Include="Interfaces\IRESTClient.cs" />
+    <Compile Include="Interfaces\IRESTClientAsync.cs" />
+    <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\REST\LoginTokenModel.cs" />
+    <Compile Include="Models\QtrInfo.cs" />
+    <Compile Include="Resources.Designer.cs" />
+    <Compile Include="StaticMethods\ComparisonComparer.cs" />
+    <Compile Include="StaticMethods\DebugUtils.cs" />
+    <Compile Include="StaticMethods\ExpandUrlsParser.cs" />
+    <Compile Include="CoreExtensions\kDateTimeExtensions.cs" />
+    <Compile Include="CoreExtensions\kDictionaryExtensions.cs" />
+    <Compile Include="CoreExtensions\kExceptionExtensions.cs" />
+    <Compile Include="CoreExtensions\kForEachExtensions.cs" />
+    <Compile Include="CoreExtensions\kMemoryStreamExtensions.cs" />
+    <Compile Include="CoreExtensions\CoreExtensionDeclarations.cs" />
+    <Compile Include="CoreExtensions\kPersistenceExtensions.cs" />
+    <Compile Include="CoreExtensions\kRandomizeExtenstion.cs" />
+    <Compile Include="CoreExtensions\kTypeExtensions.cs" />
+    <Compile Include="Models\FWRetVal.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticMethods\Extensions\ComparerExt.cs" />
+    <Compile Include="StaticMethods\LinkedComparer.cs" />
+    <Compile Include="StaticMethods\ProjectionComparer.cs" />
+    <Compile Include="StaticMethods\ProjectionEqualityComparer.cs" />
+    <Compile Include="StaticMethods\Range.cs" />
+    <Compile Include="StaticMethods\RangeIterator.cs" />
+    <Compile Include="StaticMethods\ReflectionUtils.cs" />
+    <Compile Include="StaticMethods\GetAppKey.cs" />
+    <Compile Include="StaticMethods\ReverseComparer.cs" />
+    <Compile Include="StaticMethods\StringUtils.cs" />
+    <Compile Include="StaticMethods\TimeUtils.cs" />
+    <Compile Include="StaticMethods\XMLUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Koden.Utils.nuspec" />
+    <None Include="_CreateNewNuGetPackage\Config.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\MicrosoftVisualStudioServicesCredentialProvider_Pre-releaseEULA.docx" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\test.cmd" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>10.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_CreateNewNuGetPackage\DoNotModify\CredentialProvider.VSS.exe" />
+    <Content Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+    <Content Include="_CreateNewNuGetPackage\DoNotModify\ThirdPartyNotice.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

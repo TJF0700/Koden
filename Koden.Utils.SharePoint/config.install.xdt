@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <sectionGroup name="KodenGroup" xdt:Transform="InsertIfMissing" >
+      <section name="SharePoint" type="Koden.Utils.SharePoint.ConfigFileSections.SharePointSection,Koden.Utils.SharePoint" allowLocation="true" allowDefinition="Everywhere"  xdt:Transform="InsertIfMissing" />
+    </sectionGroup>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  
+  <KodenGroup xdt:Transform="InsertIfMissing">
+    <SharePoint xdt:Transform="InsertIfMissing">
+      <Libraries xdt:Transform="InsertIfMissing">
+        <Library  name="Lib1" host="http://repository.fmgllc.com" userid="" password="" sitename="EMRDown" library="Library" basefolder="{0}/DownTime"  xdt:Transform="InsertIfMissing" />
+        <Library  name="Lib2" host="http://repository.fmgllc.com" userid="" password="" sitename="EMRDown" library="Library" basefolder="/"  xdt:Transform="InsertIfMissing" />
+      </Libraries>
+    </SharePoint>
+  </KodenGroup>
+</configuration>

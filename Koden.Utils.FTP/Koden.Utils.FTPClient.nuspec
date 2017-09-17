@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Koden.Utils.FTPClient</id>
+    <version>$version$</version>
+    <title>Koden Common Utils FTPClient</title>
+    <authors>Tim Fischer</authors>
+    <owners>App Dev</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Common Utilities for FTP/SFTP manipulation of remote Files/Folders</description>
+    <releaseNotes>Update to FluentFTP</releaseNotes>
+    <copyright>Koden</copyright>
+    <dependencies>
+      <group>
+        <dependency id="Koden.Utils" version="(1.0,2.9)" />
+        <dependency id="FluentFTP" version="(17.0,19.0)" />
+        <dependency id="SSH.NET" version="(2015.0,2017.0)" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="config.install.xdt" target="content\app.config.install.xdt" />
+  </files>
+</package>

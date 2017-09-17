@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <sectionGroup name="KodenGroup" xdt:Transform="InsertIfMissing" >
+      <section name="Logger" type=" Koden.Utils.Logger.ConfigFileSections.LoggerSection,Koden.Utils.Logger" allowLocation="true" allowDefinition="Everywhere" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)"  />
+    </sectionGroup>
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  
+  <KodenGroup xdt:Transform="InsertIfMissing">
+    <Logger enabled="false" verbose="true" maxQueueAge="5" queueSize="4" copyToConsole="true" useJSON="true" appendToDayLogFile="true" xdt:Transform="InsertIfMissing">
+      <logDirectory path="C:\logs\TestConsole" xdt:Transform="InsertIfMissing" />
+      <logFile name="autogen" xdt:Transform="InsertIfMissing" />
+      <EventLogging enabled="false" Info="false" Warning ="false" Error="true" SourceName="MyAppName"  xdt:Transform="InsertIfMissing" />
+    </Logger>
+  </KodenGroup>
+</configuration>
