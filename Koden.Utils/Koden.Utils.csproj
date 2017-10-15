@@ -97,7 +97,6 @@
     <Compile Include="Interfaces\IRESTClient.cs" />
     <Compile Include="Interfaces\IRESTClientAsync.cs" />
     <Compile Include="Models\Enums.cs" />
-    <Compile Include="Models\REST\LoginTokenModel.cs" />
     <Compile Include="Models\QtrInfo.cs" />
     <Compile Include="Resources.Designer.cs" />
     <Compile Include="StaticMethods\ComparisonComparer.cs" />

@@ -47,25 +47,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using Koden.Utils.Extensions;
 using Koden.Utils.Interfaces;
 using Koden.Utils.Models;
-using Koden.Utils.REST.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 
 
 namespace Koden.Utils.REST
 {
-  
+
     /// <summary>
     /// Client
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public class RESTClient : IRESTClient,IDisposable
+    public class RESTClient : IRESTClient, IDisposable
     {
         private static RESTClient _instance;
 
@@ -81,7 +82,7 @@ namespace Koden.Utils.REST
         private static ILogger _loggerInstance = null;
         private static Boolean _logEnabled = false;
         private static RESTOperation _method = RESTOperation.GET;
-        private static string  _postData;
+        private static string _postData;
         private static Boolean _XML = false;
         /// <summary>
         /// Gets or sets the method.
@@ -285,7 +286,7 @@ namespace Koden.Utils.REST
         /// <param name="userID">The user identifier.</param>
         /// <param name="password">The password.</param>
         /// <returns></returns>
-        public LoginTokenResult GetLoginToken(string endpoint, string userID, string password)
+        public Dictionary<string, string> GetLoginToken(string endpoint, string userID, string password)
         {
             _rootURI = endpoint;
             Method = RESTOperation.POST;
@@ -294,13 +295,82 @@ namespace Koden.Utils.REST
             ContentType = "application/x-www-form-urlencoded";
             PostData = string.Format("username={0}&password={1}&grant_type=password",
                 userID, password);
-            dynamic results;
 
             var jsonRetVal = DoRequest("/oauth2/token");
-            results = JsonConvert.DeserializeObject<LoginTokenResult>(jsonRetVal);
+            return GetTokenDictionary(jsonRetVal);
 
-            return results;
         }
+
+
+        /// <summary>
+        /// Gets the login token.
+        /// </summary>
+        /// <param name="host">The host.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="keyValues">The key values. in Dictionary format - "host", "endpoint", "username",
+        /// "password", "grant_type", "client_id", "client_secret", etc.</param>
+        /// <returns></returns>
+        public Dictionary<string, string> GetLoginToken(string host, string endpoint, Dictionary<string, string> keyValues)
+        {
+            _rootURI = host;
+
+
+            Method = RESTOperation.POST;
+            AdditionalHeaders = new Dictionary<string, string>
+            {
+                { "Audience", "Any" }
+            };
+
+            ContentType = "application/x-www-form-urlencoded";
+            PostData = string.Join("&", keyValues.Select(m => m.Key + "=" + m.Value).ToArray());
+
+            //string.Format("username={0}&password={1}&grant_type={2}&client_id={3}",
+            //keyValues.kGetValueOrDefault("username", null),
+            //keyValues.kGetValueOrDefault("password", null),
+            //keyValues.kGetValueOrDefault("grant_type", null),
+            //keyValues.kGetValueOrDefault("client_id", null)
+            //);
+
+            //"/oauth2/token"
+
+            var jsonRetVal = DoRequest(endpoint);
+            return GetTokenDictionary(jsonRetVal);
+
+        }
+        private Dictionary<string, string> GetTokenDictionary(
+           string responseContent)
+        {
+            Dictionary<string, string> tokenDictionary =
+                JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                responseContent);
+            return tokenDictionary;
+        }
+
+        /// <summary>
+        /// Gets the login token (generally at login).
+        /// </summary>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="company">The company.</param>
+        /// <returns></returns>
+        public Dictionary<string, string> GetLoginToken(string endpoint, string userID, string password, string company)
+        {
+            _rootURI = endpoint;
+            Method = RESTOperation.POST;
+            AdditionalHeaders = new Dictionary<string, string>
+            {
+                { "Audience", "Any" }
+            };
+            ContentType = "application/x-www-form-urlencoded";
+            PostData = string.Format("username={0}&password={1}&company={2}&grant_type=password",
+                userID, password, company);
+
+            var jsonRetVal = DoRequest("/oauth2/token");
+            return GetTokenDictionary(jsonRetVal);
+
+        }
+
 
         /// <summary>
         /// Makes the REST request.
@@ -324,27 +394,58 @@ namespace Koden.Utils.REST
         /// Gets the data from the API endpoint.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="restOperation">The rest operation (GET, POST, DELETE, PUT).</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="apiMethod">The API method.</param>
         /// <param name="loginToken">The login token.</param>
+        /// <param name="formData">The form data.</param>
+        /// <param name="postAsJSON">if set to <c>true</c> [post as json].</param>
         /// <param name="returnJSON">if set to <c>true</c> returns JSON else returns XML.</param>
         /// <returns></returns>
-        public T CallAPIUsingToken<T>(string endpoint, string apiMethod, LoginTokenResult loginToken, bool returnJSON)
+        public FWRetVal<T> CallAPIUsingToken<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData = "", bool postAsJSON = false, bool returnJSON = true)
         {
-            _rootURI = endpoint;
-            Method = RESTOperation.GET;
-            AdditionalHeaders = new Dictionary<string, string>();
-            AdditionalHeaders.Add("Authorization", "Bearer " + loginToken.AccessToken);
+            var retVal = new FWRetVal<T>
+            {
+                MsgType = FWMsgType.Success,
+                Value = "Successful"
+            };
 
-            if (returnJSON) ContentType = "application/json";
-            else ContentType = "text/xml";
+            try
+            {
+                _rootURI = endpoint;
+                Method = restOperation;
+                AdditionalHeaders = new Dictionary<string, string>
+                                        {
+                                            { "Authorization", "Bearer " + loginToken.kGetValueOrDefault("access_token","") }
+                                        };
 
-            T results;
+                if (restOperation == RESTOperation.GET || restOperation == RESTOperation.DELETE)
+                {
+                    if (returnJSON) ContentType = "application/json";
+                    else ContentType = "text/xml";
+                }
+                else
+                {
+                    AdditionalHeaders.Add("Audience", "Any");
+                    _postData = formData;
+                }
 
-            var jsonRetVal = DoRequest(apiMethod);
-            results = JsonConvert.DeserializeObject<T>(jsonRetVal);
+                if (postAsJSON) ContentType = "application/json";
+                else ContentType = "application/x-www-form-urlencoded";
 
-            return results;
+                var jsonRetVal = DoRequest(apiMethod);
+
+                retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+
+            }
+            catch (Exception ex)
+            {
+                retVal.MsgType = FWMsgType.Error;
+                retVal.Value = "Error: " + ex.kGetAllMessages();
+            }
+
+
+            return retVal;
         }
 
         /// <summary>
@@ -497,7 +598,21 @@ namespace Koden.Utils.REST
         /// </summary>
         public void Dispose()
         {
-            _loggerInstance.FlushLog();
+            _rootURI = "";
+            _UserId = "";
+            _UserKey = "";
+            _Password = "";
+            _AuthType = "";
+            _logEnabled = false;
+            _method = RESTOperation.GET;
+            _postData = "";
+            _XML = false;
+            if (_logEnabled)
+            {
+                _loggerInstance.FlushLog();
+                _loggerInstance = null;
+            }
+
         }
     } // class
 }

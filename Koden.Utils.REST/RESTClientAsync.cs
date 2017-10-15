@@ -22,34 +22,10 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-#region License
-// Copyright (c) 2014 Tim Fischer
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
-#endregion
 
+using Koden.Utils.Extensions;
 using Koden.Utils.Interfaces;
 using Koden.Utils.Models;
-using Koden.Utils.REST.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -66,6 +42,7 @@ namespace Koden.Utils.REST
     /// <summary>
     /// Asynchronously make REST Calls
     /// </summary>
+    /// <seealso cref="Koden.Utils.REST.IRESTClientAsync" />
     /// <seealso cref="System.IDisposable" />
     public class RESTClientAsync : IDisposable, IRESTClientAsync
     {
@@ -246,33 +223,6 @@ namespace Koden.Utils.REST
 
 
         /// <summary>
-        /// Gets the data from the API endpoint.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="endpoint">The endpoint.</param>
-        /// <param name="apiMethod">The API method.</param>
-        /// <param name="loginToken">The login token.</param>
-        /// <param name="returnJSON">if set to <c>true</c> returns JSON else returns XML.</param>
-        /// <returns></returns>
-        public async Task<T> CallAPIUsingTokenAsync<T>(string endpoint, string apiMethod, LoginTokenResult loginToken, bool returnJSON)
-        {
-            _rootURI = endpoint;
-            Method = RESTOperation.GET;
-            AdditionalHeaders = new Dictionary<string, string>();
-            AdditionalHeaders.Add("Authorization", "Bearer " + loginToken.AccessToken);
-
-            if (returnJSON) ContentType = "application/json";
-            else ContentType = "text/xml";
-
-            T results;
-
-            var jsonRetVal = await DoRequestAsync(apiMethod);
-            results = JsonConvert.DeserializeObject<T>(jsonRetVal);
-
-            return results;
-        }
-
-        /// <summary>
         /// Makes the request asynchronously.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
@@ -410,7 +360,6 @@ namespace Koden.Utils.REST
 
             return request;
         }
-
         /// <summary>
         /// Gets the login token.
         /// </summary>
@@ -418,50 +367,113 @@ namespace Koden.Utils.REST
         /// <param name="userID">The user identifier.</param>
         /// <param name="password">The password.</param>
         /// <returns></returns>
-        public async Task<LoginTokenResult> GetLoginTokenAsync(string endpoint, string userID, string password)
+        public async Task<Dictionary<string, string>> GetLoginTokenAsync(string endpoint, string userID, string password, string company)
         {
             _rootURI = endpoint;
             Method = RESTOperation.POST;
-            AdditionalHeaders = new Dictionary<string, string>();
-            AdditionalHeaders.Add("Audience", "Any");
+            AdditionalHeaders = new Dictionary<string, string>
+            {
+                { "Audience", "Any" }
+            };
+            ContentType = "application/x-www-form-urlencoded";
+            PostData = string.Format("username={0}&password={1}&company={2}&grant_type=password",
+                userID, password, company);
+
+            var jsonRetVal = await DoRequestAsync("/oauth2/token");
+            return GetTokenDictionary(jsonRetVal);
+        }
+
+
+        /// <summary>
+        /// Gets the login token (generally at login).
+        /// </summary>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="password">The password.</param>
+        /// <returns></returns>
+        public async Task<Dictionary<string, string>> GetLoginTokenAsync(string endpoint, string userID, string password)
+        {
+            _rootURI = endpoint;
+            Method = RESTOperation.POST;
+            AdditionalHeaders = new Dictionary<string, string>
+            {
+                { "Audience", "Any" }
+            };
             ContentType = "application/x-www-form-urlencoded";
             PostData = string.Format("username={0}&password={1}&grant_type=password",
                 userID, password);
-            dynamic results;
 
             var jsonRetVal = await DoRequestAsync("/oauth2/token");
-            results = JsonConvert.DeserializeObject<LoginTokenResult>(jsonRetVal);
-
-            return results;
+            return GetTokenDictionary(jsonRetVal);
         }
 
+        private Dictionary<string, string> GetTokenDictionary(
+        string responseContent)
+        {
+            Dictionary<string, string> tokenDictionary =
+                JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                responseContent);
+            return tokenDictionary;
+        }
         /// <summary>
         /// Gets the data from the api endpoint.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="restOperation">The rest operation (GET,DELETE,PUT,etc).</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="apiMethod">The API method.</param>
         /// <param name="loginToken">The login token.</param>
+        /// <param name="formData">The form data.</param>
+        /// <param name="postAsJSON">if set to <c>true</c> [post as json].</param>
         /// <param name="returnJSON">if set to <c>true</c> returns JSON else returns XML.</param>
         /// <returns></returns>
-        public async Task<T> CallAPIUsingToken<T>(string endpoint, string apiMethod, LoginTokenResult loginToken, bool returnJSON)
+
+        public async Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON)
         {
-            _rootURI = endpoint;
-            Method = RESTOperation.GET;
-            AdditionalHeaders = new Dictionary<string, string>();
-            AdditionalHeaders.Add("Authorization", "Bearer " + loginToken.AccessToken);
+            var retVal = new FWRetVal<T>
+            {
+                MsgType = FWMsgType.Success,
+                Value = "Successful"
+            };
 
-            if (returnJSON) ContentType = "application/json";
-            else ContentType = "text/xml";
+            try
+            {
+                _rootURI = endpoint;
+                Method = restOperation;
+                AdditionalHeaders = new Dictionary<string, string>
+                                        {
+                                            { "Authorization", "Bearer " + loginToken.kGetValueOrDefault("access_token","") }
+                                        };
 
-            T results;
+                if (restOperation == RESTOperation.GET || restOperation == RESTOperation.DELETE)
+                {
+                    if (returnJSON) ContentType = "application/json";
+                    else ContentType = "text/xml";
+                }
+                else
+                {
+                    AdditionalHeaders.Add("Audience", "Any");
+                    _postData = formData;
+                }
 
-            var jsonRetVal = await DoRequestAsync(apiMethod);
-            results = JsonConvert.DeserializeObject<T>(jsonRetVal);
+                if (postAsJSON) ContentType = "application/json";
+                else ContentType = "application/x-www-form-urlencoded";
 
-            return results;
+                var jsonRetVal = await DoRequestAsync(apiMethod);
+
+                retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+            }
+            catch (Exception ex)
+            {
+                retVal.MsgType = FWMsgType.Error;
+                retVal.Value = "Error: " + ex.kGetAllMessages();
+            }
+
+
+            return retVal;
         }
 
+  
         /// <summary>
         /// Gets the HTTP response asynchronously.
         /// </summary>
@@ -489,7 +501,22 @@ namespace Koden.Utils.REST
         /// </summary>
         public void Dispose()
         {
-            _loggerInstance.FlushLog();
+            _rootURI = "";
+            _UserId = "";
+            _UserKey = "";
+            _Password = "";
+            _AuthType = "";
+            _logEnabled = false;
+            _method = RESTOperation.GET;
+            _postData = "";
+            _XML = false;
+            if (_logEnabled)
+            {
+                _loggerInstance.FlushLog();
+                _loggerInstance = null;
+            }
         }
+
+
     } // class
 }

@@ -3,6 +3,7 @@
 *.user
 *.sln.docstates
 Koden.ALL.sln
+Koden.DEMO/
 
 # Build results
 

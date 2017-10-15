@@ -39,25 +39,59 @@ namespace Koden.Utils.Encryption
         /// </summary>
         public Encryption() { }
         /// <summary>
-        /// Generates the sha1 hash.
+        /// Generates the SHA1 hash.
         /// </summary>
         /// <param name="value">The string to generate.</param>
         /// <returns></returns>
-        public static string GenerateSha1Hash(string value)
+        public static string GenerateSHA1Hash(string value)
         {
             return Convert.ToBase64String(new SHA1Managed().ComputeHash(Encoding.Default.GetBytes(value)));
         }
 
         /// <summary>
-        /// Gets the decrypted sha1 hash data.
+        /// Gets the decrypted SHA1 hash data.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns></returns>
-        public static string GetDecryptedSha1HashData(string data)
+        public static string GetDecryptedSHA1HashData(string data)
         {
             byte[] decData = Convert.FromBase64String(data);
             string dscString = Encoding.ASCII.GetString(decData);
             return dscString;
+        }
+
+        /// <summary>
+        /// Generates the SHA256 hash.
+        /// </summary>
+        /// <param name="value">The string to generate.</param>
+        /// <returns></returns>
+        public static string GenerateSHA256Hash(string value)
+        {
+            return Convert.ToBase64String(new SHA256CryptoServiceProvider().ComputeHash(Encoding.Default.GetBytes(value)));
+        }
+
+        /// <summary>
+        /// Gets the decrypted SHA256 hash data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
+        public static string GetDecryptedSHA256HashData(string data)
+        {
+            byte[] decData = Convert.FromBase64String(data);
+            string dscString = Encoding.ASCII.GetString(decData);
+            return dscString;
+        }
+
+
+        /// <summary>
+        /// Encodes a string to Base64.
+        /// </summary>
+        /// <param name="plainText">The plain text string.</param>
+        /// <returns> string encoded to Base 64</returns>
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
         }
 
         /// <summary>
@@ -96,7 +130,7 @@ namespace Koden.Utils.Encryption
               {
                 '.'
               });
-            return GenerateSha1Hash(Convert.ToString(Convert.ToInt32(strArray[0]), 2).PadLeft(8, '0') + Convert.ToString(Convert.ToInt32(strArray[1]), 2).PadLeft(8, '0') + Convert.ToString(Convert.ToInt32(strArray[2]), 2).PadLeft(8, '0').Substring(0, 4)).Trim();
+            return GenerateSHA256Hash(Convert.ToString(Convert.ToInt32(strArray[0]), 2).PadLeft(8, '0') + Convert.ToString(Convert.ToInt32(strArray[1]), 2).PadLeft(8, '0') + Convert.ToString(Convert.ToInt32(strArray[2]), 2).PadLeft(8, '0').Substring(0, 4)).Trim();
         }
 
         #region TripleDES Encryption (http://www.codeproject.com/Articles/14150/Encrypt-and-Decrypt-Data-with-C)
