@@ -22,30 +22,6 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-#region License
-// Copyright (c) 2014 Tim Fischer
-//
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
-#endregion
 
 using Koden.Utils.Extensions;
 using Koden.Utils.Interfaces;
@@ -61,6 +37,12 @@ using System.Text;
 
 namespace Koden.Utils.REST
 {
+
+    internal class ODataResponse<T>
+    {
+        public List<T> Value { get; set; }
+    }
+
 
     /// <summary>
     /// Client
@@ -324,19 +306,10 @@ namespace Koden.Utils.REST
             ContentType = "application/x-www-form-urlencoded";
             PostData = string.Join("&", keyValues.Select(m => m.Key + "=" + m.Value).ToArray());
 
-            //string.Format("username={0}&password={1}&grant_type={2}&client_id={3}",
-            //keyValues.kGetValueOrDefault("username", null),
-            //keyValues.kGetValueOrDefault("password", null),
-            //keyValues.kGetValueOrDefault("grant_type", null),
-            //keyValues.kGetValueOrDefault("client_id", null)
-            //);
-
-            //"/oauth2/token"
-
             var jsonRetVal = DoRequest(endpoint);
             return GetTokenDictionary(jsonRetVal);
-
         }
+
         private Dictionary<string, string> GetTokenDictionary(
            string responseContent)
         {
@@ -402,7 +375,7 @@ namespace Koden.Utils.REST
         /// <param name="postAsJSON">if set to <c>true</c> [post as json].</param>
         /// <param name="returnJSON">if set to <c>true</c> returns JSON else returns XML.</param>
         /// <returns></returns>
-        public FWRetVal<T> CallAPIUsingToken<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData = "", bool postAsJSON = false, bool returnJSON = true)
+        public FWRetVal<T> CallAPIUsingToken<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData = "", bool postAsJSON = false, bool returnJSON = true, bool isOData = false)
         {
             var retVal = new FWRetVal<T>
             {
@@ -435,7 +408,16 @@ namespace Koden.Utils.REST
 
                 var jsonRetVal = DoRequest(apiMethod);
 
-                retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+
+                if (isOData)
+                {
+                    var tmpObj = JsonConvert.DeserializeObject<ODataResponse<T>>(jsonRetVal);
+                    retVal.Records = tmpObj.Value;
+                }
+                else
+                {
+                    retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+                }
 
             }
             catch (Exception ex)
@@ -447,6 +429,7 @@ namespace Koden.Utils.REST
 
             return retVal;
         }
+
 
         /// <summary>
         /// Makes the REST request.

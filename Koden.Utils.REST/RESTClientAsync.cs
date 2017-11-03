@@ -30,6 +30,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -273,7 +274,8 @@ namespace Koden.Utils.REST
 
                 var validStatus = new List<HttpStatusCode> { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted, HttpStatusCode.NoContent };
                 if (_logEnabled) _loggerInstance.Debug("Contacting Endpoint...");
-                using (var response = (HttpWebResponse)await request.GetResponseAsync())
+
+                using (var response = (HttpWebResponse)request.GetResponse())
                 {
                     if (!validStatus.Contains(response.StatusCode))
                     {
@@ -283,6 +285,7 @@ namespace Koden.Utils.REST
                     }
 
                     responseValue = await GetHTTPResponseAsync(response);
+
                     response.Close();
                 }
                 if (_logEnabled) _loggerInstance.Debug("Response Received!");
@@ -407,6 +410,32 @@ namespace Koden.Utils.REST
             return GetTokenDictionary(jsonRetVal);
         }
 
+        /// <summary>
+        /// Gets the login token asynchronously.
+        /// </summary>
+        /// <param name="host">The host.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="keyValues">The key values. in Dictionary format - "host", "endpoint", "username",
+        /// "password", "grant_type", "client_id", "client_secret", etc.</param>
+        /// <returns></returns>
+        public async Task<Dictionary<string, string>> GetLoginTokenAsync(string host, string endpoint, Dictionary<string, string> keyValues)
+        {
+            _rootURI = host;
+
+
+            Method = RESTOperation.POST;
+            AdditionalHeaders = new Dictionary<string, string>
+            {
+                { "Audience", "Any" }
+            };
+
+            ContentType = "application/x-www-form-urlencoded";
+            PostData = string.Join("&", keyValues.Select(m => m.Key + "=" + m.Value).ToArray());
+
+            var jsonRetVal = await DoRequestAsync(endpoint);
+            return GetTokenDictionary(jsonRetVal);
+        }
+
         private Dictionary<string, string> GetTokenDictionary(
         string responseContent)
         {
@@ -428,7 +457,7 @@ namespace Koden.Utils.REST
         /// <param name="returnJSON">if set to <c>true</c> returns JSON else returns XML.</param>
         /// <returns></returns>
 
-        public async Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON)
+        public async Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData = false)
         {
             var retVal = new FWRetVal<T>
             {
@@ -461,7 +490,15 @@ namespace Koden.Utils.REST
 
                 var jsonRetVal = await DoRequestAsync(apiMethod);
 
-                retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+                if (isOData)
+                {
+                    var tmpObj = JsonConvert.DeserializeObject<ODataResponse<T>>(jsonRetVal);
+                    retVal.Records = tmpObj.Value;
+                }
+                else
+                {
+                    retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+                }
             }
             catch (Exception ex)
             {
@@ -473,7 +510,7 @@ namespace Koden.Utils.REST
             return retVal;
         }
 
-  
+
         /// <summary>
         /// Gets the HTTP response asynchronously.
         /// </summary>
@@ -495,6 +532,7 @@ namespace Koden.Utils.REST
 
             return retVal;
         }
+
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

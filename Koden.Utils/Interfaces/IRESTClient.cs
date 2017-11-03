@@ -108,8 +108,9 @@ namespace Koden.Utils.REST
         /// <param name="formData">The form data.</param>
         /// <param name="postAsJSON">if set to <c>true</c> [post as json].</param>
         /// <param name="returnJSON">if set to <c>true</c> [return json].</param>
+        /// <param name="isOData">if set to <c>true</c> [is o data].</param>
         /// <returns></returns>
-        FWRetVal<T> CallAPIUsingToken<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON);
+        FWRetVal<T> CallAPIUsingToken<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
         /// <summary>
         /// Gets the login token (generally at login).
         /// </summary>
