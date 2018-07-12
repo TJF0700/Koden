@@ -13,7 +13,7 @@
     <dependencies>
       <group>
         <dependency id="Koden.Utils" version="(1.0,2.0)" />
-        <dependency id="Newtonsoft.Json" version="(9.0,11.0)" />
+        <dependency id="Newtonsoft.Json" version="(9.0,12.0)" />
       </group>
     </dependencies>
   </metadata>
