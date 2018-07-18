@@ -4,7 +4,7 @@
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the 'Software'), to deal in the Software without
-// restriction, including without limitation the rights to use,
+// SOAPriction, including without limitation the rights to use,
 // copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following
@@ -22,17 +22,16 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-using Koden.Utils.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Koden.Utils.Models;
 
-namespace Koden.Utils.REST
+namespace Koden.Utils.SOAP
 {
- 
-
     /// <summary>
-    /// Interface to RESTCLient
+    /// Interface to Asynchronous SOAP Client
     /// </summary>
-    public interface IRESTClient
+    public interface ISOAPClientAsync
     {
         /// <summary>
         /// Gets or sets the additional headers.
@@ -55,15 +54,16 @@ namespace Koden.Utils.REST
         ///   <c>true</c> if [log enabled]; otherwise, <c>false</c>.
         /// </value>
         bool LogEnabled { get; set; }
+
         /// <summary>
-        /// Gets or sets the method.
+        /// Gets or sets the method (GET,POST,PUT, etc).
         /// </summary>
         /// <value>
         /// The method.
         /// </value>
         HTTPOperation Method { get; set; }
         /// <summary>
-        /// Gets or sets the post data.
+        /// Gets or sets the data to POST to an API.
         /// </summary>
         /// <value>
         /// The post data.
@@ -77,18 +77,18 @@ namespace Koden.Utils.REST
         /// </value>
         int TimeOut { get; set; }
 
-        /// <summary>
+         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
         void Dispose();
         /// <summary>
-        /// Makes the request.
+        /// Does the request asynchronously.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        string DoRequest(string parameters);
+        Task<string> DoRequestAsync(string parameters);
         /// <summary>
-        /// Makes the request.
+        /// Does the request asynchronously.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <param name="userID">The user identifier.</param>
@@ -96,12 +96,13 @@ namespace Koden.Utils.REST
         /// <param name="timeOut">The time out.</param>
         /// <param name="authtype">The authtype.</param>
         /// <returns></returns>
-        string DoRequest(string parameters, string userID, string password, int timeOut, string authtype);
+        Task<string> DoRequestAsync(string parameters, string userID, string password, int timeOut, string authtype);
+
         /// <summary>
-        /// Calls a RESTful API using login Token Gets the API data.
+        /// Calls a SOAPful API using login Token Gets the API data.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="restOperation">The rest operation (GET,DELETE,PUT,etc).</param>
+        /// <param name="HTTPOperation">The SOAP operation (GET,DELETE,PUT,etc).</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="apiMethod">The API method.</param>
         /// <param name="loginToken">The login token.</param>
@@ -110,7 +111,7 @@ namespace Koden.Utils.REST
         /// <param name="returnJSON">if set to <c>true</c> [return json].</param>
         /// <param name="isOData">if set to <c>true</c> [is o data].</param>
         /// <returns></returns>
-        FWRetVal<T> CallAPIUsingToken<T>(HTTPOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
+        Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(HTTPOperation HTTPOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
         /// <summary>
         /// Gets the login token (generally at login).
         /// </summary>
@@ -118,7 +119,7 @@ namespace Koden.Utils.REST
         /// <param name="userID">The user identifier.</param>
         /// <param name="password">The password.</param>
         /// <returns></returns>
-        Dictionary<string, string> GetLoginToken(string endpoint, string userID, string password);
+        Task<Dictionary<string, string>> GetLoginTokenAsync(string endpoint, string userID, string password);
 
         /// <summary>
         /// Gets the login token (generally at login).
@@ -128,6 +129,8 @@ namespace Koden.Utils.REST
         /// <param name="password">The password.</param>
         /// <param name="company">The Company.</param>
         /// <returns></returns>
-        Dictionary<string, string> GetLoginToken(string endpoint, string userID, string password, string company);
+        Task<Dictionary<string, string>> GetLoginTokenAsync(string endpoint, string userID, string password, string company);
+
+
     }
 }

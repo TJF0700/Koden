@@ -90,7 +90,9 @@
     <Compile Include="Interfaces\IEmailer.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IMailHeader.cs" />
+    <Compile Include="Interfaces\ISOAPClient.cs" />
     <Compile Include="Interfaces\IRESTClient.cs" />
+    <Compile Include="Interfaces\ISOAPClientAsync.cs" />
     <Compile Include="Interfaces\IRESTClientAsync.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\QtrInfo.cs" />

@@ -61,7 +61,7 @@ namespace Koden.Utils.REST
         /// <value>
         /// The method.
         /// </value>
-        RESTOperation Method { get; set; }
+        HTTPOperation Method { get; set; }
         /// <summary>
         /// Gets or sets the data to POST to an API.
         /// </summary>
@@ -111,7 +111,7 @@ namespace Koden.Utils.REST
         /// <param name="returnJSON">if set to <c>true</c> [return json].</param>
         /// <param name="isOData">if set to <c>true</c> [is o data].</param>
         /// <returns></returns>
-        Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
+        Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(HTTPOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
         /// <summary>
         /// Gets the login token (generally at login).
         /// </summary>

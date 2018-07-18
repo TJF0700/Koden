@@ -36,8 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Koden.Utils, Version=1.1.6754.20392, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Koden.Utils.1.1.6754.20392\lib\net45\Koden.Utils.dll</HintPath>
+    <Reference Include="Koden.Utils, Version=1.1.6772.38075, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Koden.Utils.1.1.6772.38075\lib\net45\Koden.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.WebServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.dll</HintPath>

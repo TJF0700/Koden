@@ -62,7 +62,7 @@ namespace Koden.Utils.REST
         private Boolean _XML = false;
 
 
-        private static RESTOperation _method = RESTOperation.GET;
+        private static HTTPOperation _method = HTTPOperation.GET;
         private string _contentType = "text/xml";
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Koden.Utils.REST
         /// <value>
         /// The method.
         /// </value>
-        public RESTOperation Method
+        public HTTPOperation Method
         {
             get { return _method; }
             set { _method = value; }
@@ -176,7 +176,7 @@ namespace Koden.Utils.REST
         public RESTClientAsync()
         {
             _rootURI = "";
-            Method = RESTOperation.GET;
+            Method = HTTPOperation.GET;
             PostData = "";
         }
         /// <summary>
@@ -187,7 +187,7 @@ namespace Koden.Utils.REST
         public RESTClientAsync(string endpoint, bool XML = false)
         {
             _rootURI = endpoint;
-            Method = RESTOperation.GET;
+            Method = HTTPOperation.GET;
             _XML = XML;
             PostData = "";
         }
@@ -199,7 +199,7 @@ namespace Koden.Utils.REST
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="method">The method.</param>
         /// <param name="XML">if set to <c>true</c> [XML].</param>
-        public RESTClientAsync(string endpoint, RESTOperation method, bool XML = false)
+        public RESTClientAsync(string endpoint, HTTPOperation method, bool XML = false)
         {
             _rootURI = endpoint;
             Method = method;
@@ -214,7 +214,7 @@ namespace Koden.Utils.REST
         /// <param name="method">The method.</param>
         /// <param name="postData">The post data.</param>
         /// <param name="XML">if set to <c>true</c> [XML].</param>
-        public RESTClientAsync(string endpoint, RESTOperation method, string postData, bool XML = false)
+        public RESTClientAsync(string endpoint, HTTPOperation method, string postData, bool XML = false)
         {
             _rootURI = endpoint;
             Method = method;
@@ -259,7 +259,7 @@ namespace Koden.Utils.REST
                 request = ModifyHeaders(request);
 
 
-                if (!string.IsNullOrEmpty(PostData) && (Method == RESTOperation.POST || Method == RESTOperation.PUT || Method == RESTOperation.PATCH || Method == RESTOperation.MERGE))
+                if (!string.IsNullOrEmpty(PostData) && (Method == HTTPOperation.POST || Method == HTTPOperation.PUT || Method == HTTPOperation.PATCH || Method == HTTPOperation.MERGE))
                 {
                     byte[] bytes = Encoding.UTF8.GetBytes(PostData);
                     request.ContentLength = bytes.Length;
@@ -373,7 +373,7 @@ namespace Koden.Utils.REST
         public async Task<Dictionary<string, string>> GetLoginTokenAsync(string endpoint, string userID, string password, string company)
         {
             _rootURI = endpoint;
-            Method = RESTOperation.POST;
+            Method = HTTPOperation.POST;
             AdditionalHeaders = new Dictionary<string, string>
             {
                 { "Audience", "Any" }
@@ -397,7 +397,7 @@ namespace Koden.Utils.REST
         public async Task<Dictionary<string, string>> GetLoginTokenAsync(string endpoint, string userID, string password)
         {
             _rootURI = endpoint;
-            Method = RESTOperation.POST;
+            Method = HTTPOperation.POST;
             AdditionalHeaders = new Dictionary<string, string>
             {
                 { "Audience", "Any" }
@@ -423,7 +423,7 @@ namespace Koden.Utils.REST
             _rootURI = host;
 
 
-            Method = RESTOperation.POST;
+            Method = HTTPOperation.POST;
             AdditionalHeaders = new Dictionary<string, string>
             {
                 { "Audience", "Any" }
@@ -448,7 +448,7 @@ namespace Koden.Utils.REST
         /// Gets the data from the api endpoint.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="restOperation">The rest operation (GET,DELETE,PUT,etc).</param>
+        /// <param name="HTTPOperation">The rest operation (GET,DELETE,PUT,etc).</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="apiMethod">The API method.</param>
         /// <param name="loginToken">The login token.</param>
@@ -457,7 +457,7 @@ namespace Koden.Utils.REST
         /// <param name="returnJSON">if set to <c>true</c> returns JSON else returns XML.</param>
         /// <returns></returns>
 
-        public async Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(RESTOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData = false)
+        public async Task<FWRetVal<T>> CallAPIUsingTokenAsync<T>(HTTPOperation HTTPOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData = false)
         {
             var retVal = new FWRetVal<T>
             {
@@ -468,13 +468,13 @@ namespace Koden.Utils.REST
             try
             {
                 _rootURI = endpoint;
-                Method = restOperation;
+                Method = HTTPOperation;
                 AdditionalHeaders = new Dictionary<string, string>
                                         {
                                             { "Authorization", "Bearer " + loginToken.kGetValueOrDefault("access_token","") }
                                         };
 
-                if (restOperation == RESTOperation.GET || restOperation == RESTOperation.DELETE)
+                if (HTTPOperation == HTTPOperation.GET || HTTPOperation == HTTPOperation.DELETE)
                 {
                     if (returnJSON) ContentType = "application/json";
                     else ContentType = "text/xml";
@@ -545,7 +545,7 @@ namespace Koden.Utils.REST
             _Password = "";
             _AuthType = "";
             _logEnabled = false;
-            _method = RESTOperation.GET;
+            _method = HTTPOperation.GET;
             _postData = "";
             _XML = false;
             if (_logEnabled)

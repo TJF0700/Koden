@@ -88,7 +88,7 @@ namespace Koden.Utils.Models
     /// <summary>
     /// Operations to perform using REST Calls
     /// </summary>
-    public enum RESTOperation
+    public enum HTTPOperation
     {
         /// <summary>
         /// GET REST Method

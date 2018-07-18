@@ -4,7 +4,7 @@
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the 'Software'), to deal in the Software without
-// restriction, including without limitation the rights to use,
+// SOAPriction, including without limitation the rights to use,
 // copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following
@@ -25,14 +25,14 @@
 using Koden.Utils.Models;
 using System.Collections.Generic;
 
-namespace Koden.Utils.REST
+namespace Koden.Utils.SOAP
 {
  
 
     /// <summary>
-    /// Interface to RESTCLient
+    /// Interface to SOAPCLient
     /// </summary>
-    public interface IRESTClient
+    public interface ISOAPClient
     {
         /// <summary>
         /// Gets or sets the additional headers.
@@ -98,10 +98,10 @@ namespace Koden.Utils.REST
         /// <returns></returns>
         string DoRequest(string parameters, string userID, string password, int timeOut, string authtype);
         /// <summary>
-        /// Calls a RESTful API using login Token Gets the API data.
+        /// Calls a SOAPful API using login Token Gets the API data.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="restOperation">The rest operation (GET,DELETE,PUT,etc).</param>
+        /// <param name="HTTPOperation">The SOAP operation (GET,DELETE,PUT,etc).</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="apiMethod">The API method.</param>
         /// <param name="loginToken">The login token.</param>
@@ -110,7 +110,7 @@ namespace Koden.Utils.REST
         /// <param name="returnJSON">if set to <c>true</c> [return json].</param>
         /// <param name="isOData">if set to <c>true</c> [is o data].</param>
         /// <returns></returns>
-        FWRetVal<T> CallAPIUsingToken<T>(HTTPOperation restOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
+        FWRetVal<T> CallAPIUsingToken<T>(HTTPOperation HTTPOperation, string endpoint, string apiMethod, Dictionary<string, string> loginToken, string formData, bool postAsJSON, bool returnJSON, bool isOData);
         /// <summary>
         /// Gets the login token (generally at login).
         /// </summary>
