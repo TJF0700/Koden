@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Koden.Utils.MVC</RootNamespace>
     <AssemblyName>Koden.Utils.MVC</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -58,10 +58,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\System.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,10 +89,12 @@
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="lib\System.Web.Mvc.dll" />
-    <Content Include="lib\System.Web.Mvc.xml" />
+    <PackageReference Include="Microsoft.AspNet.Mvc">
+      <Version>5.2.6</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="_CreateNewNuGetPackage\DoNotModify\CredentialProvider.VSS.exe" />
     <Content Include="_CreateNewNuGetPackage\DoNotModify\ThirdPartyNotice.txt" />
   </ItemGroup>

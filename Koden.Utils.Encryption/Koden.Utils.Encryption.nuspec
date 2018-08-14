@@ -8,7 +8,7 @@
     <owners>App Dev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Common Utilities for Encryption techniques</description>
-    <releaseNotes>Added Base64Encode method</releaseNotes>
+    <releaseNotes>Upgrade to .Net 4.6.1</releaseNotes>
     <copyright>Koden</copyright>
   </metadata>
 </package>

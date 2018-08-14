@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Koden.Utils.AD</RootNamespace>
     <AssemblyName>Koden.Utils.AD</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -36,8 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Koden.Utils, Version=1.1.6772.38075, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Koden.Utils.1.1.6772.38075\lib\net45\Koden.Utils.dll</HintPath>
+    <Reference Include="Koden.Utils, Version=1.1.6799.38571, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Koden.Utils.1.1.6799.38571\lib\net461\Koden.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>

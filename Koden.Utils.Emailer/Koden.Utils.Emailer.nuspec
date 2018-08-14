@@ -8,7 +8,7 @@
     <owners>Koden Dev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Koden Utilities for emailing</description>
-    <releaseNotes>Exception handling modified.  Documentation</releaseNotes>
+    <releaseNotes>Upgrade to .Net 4.6.1</releaseNotes>
     <copyright>Koden</copyright>
     <dependencies>
       <group>
