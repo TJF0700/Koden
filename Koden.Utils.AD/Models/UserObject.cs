@@ -60,13 +60,111 @@ namespace Koden.Utils.AD
         TrustedToAuthenticateForDelegation = 16777216, // 0x1000000
         NoAuthDataRequired = 33554432         // 0x2000000
     }
+
+    public class BaseUserObject
+    {
+
+        public BaseUserObject(string userID, string userName, string title = "",string firstName="", string lastName="" ) {
+            _userID = userID;
+            _userName = userName;
+            //_cn = cn;
+            _firstName = firstName;
+            _lastName = lastName;
+            _title = title;
+        }
+
+
+        private string _userID;
+        private string _userName;
+        private string _cn;
+        private string _firstName;
+        private string _lastName;
+        private string _title;
+
+        public string UserID
+        {
+            get
+            {
+                return _userID;
+            }
+
+            set
+            {
+                this._userID = value;
+            }
+        }
+
+        public string UserName
+        {
+            get
+            {
+                return _userName;
+            }
+
+            set
+            {
+                this._userName = value;
+            }
+        }
+
+        public string CN
+        {
+            get
+            {
+                return _cn;
+            }
+
+            set
+            {
+                this._cn = value;
+            }
+        }
+
+        public string FirstName
+        {
+            get
+            {
+                return _firstName;
+            }
+
+            set
+            {
+                this._firstName = value;
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return _lastName;
+            }
+
+            set
+            {
+                this._lastName = value;
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+
+            set
+            {
+                this._title = value;
+            }
+        }
+    }
     public class UserObject
     {
         private string userID;
         private string userName;
         private byte[] objectGUID; // absolute object in AD
         private string division;
-        private string employeeID;
         private string cn;
         private string firstName;
         private string lastName;
@@ -153,18 +251,6 @@ namespace Koden.Utils.AD
             }
         }
 
-        public string EmployeeID
-        {
-            get
-            {
-                return employeeID;
-            }
-
-            set
-            {
-                this.employeeID = value;
-            }
-        }
 
         public string Cn
         {

@@ -29,6 +29,7 @@ using System.DirectoryServices;
 using System.Security;
 using System.Runtime.InteropServices;
 using Koden.Utils.Interfaces;
+using Koden.Utils.Models;
 
 namespace Koden.Utils.AD
 {
@@ -46,7 +47,7 @@ namespace Koden.Utils.AD
         private string _adUserId { get; set; }
         private string _adPassword { get; set; }
         private ILogger _loggerInstance = null;
-        private Boolean _logEnabled = false;
+        private bool _logEnabled = false;
 
         private string[] _propsToLoad = new[] {
                 "samaccountname",
@@ -57,7 +58,6 @@ namespace Koden.Utils.AD
                 "objectGUID",
                 "displayname",
                 "mail",
-                "employeeID",
                 "telephoneNumber",
                 "physicalDeliveryOfficeName",
                 "mobile",
@@ -133,6 +133,39 @@ namespace Koden.Utils.AD
             _adPassword = adHeader.Password;
             _adOU = adHeader.OU;
 
+        }
+
+        /// <summary>
+        /// Gets the users in group.s
+        /// </summary>
+        /// <param name="groupName">Name of the group.</param>
+        /// <returns></returns>
+        public List<String> GetGroups(string groupName)
+        {
+            var groups = new List<String>();
+            if (_logEnabled) _loggerInstance.Info("Connecting to AD: {0}", _adLDAPRoot);
+            var dirRoot = new DirectoryEntry(String.Format(_adLDAPRoot, _adOU));
+            var dirGroup = new DirectoryEntry(String.Format(_adLDAPRoot, ""));
+
+            var filt = "(&(objectCategory=group)(cn=" + groupName + "))";
+            
+            using (DirectorySearcher grpSrch = new DirectorySearcher(dirGroup, filt))
+            {
+
+                var resultCol = SafeFindAll(grpSrch);
+                var count = 0;
+                foreach (SearchResult item in resultCol)
+                {
+                    groups.Add(GetProperty(item, "cn"));
+                    count++;
+                    if (count % 200 == 0)
+                    {
+                        if (_logEnabled) _loggerInstance.Info("At {0} groups...", count);
+                    }
+                }
+            }
+
+            return groups;
         }
         /// <summary>
         /// Gets the users in group.
@@ -288,6 +321,44 @@ namespace Koden.Utils.AD
             }
 
         }
+
+
+        /// <summary>
+        /// Gets the users in group.s
+        /// </summary>
+        /// <param name="userName">Name of the group.</param>
+        /// <param name="propertiesToLoad">The properties to load.</param>
+        /// <returns></returns>
+        public List<BaseUserObject> GetUsers(string userName, string[] propertiesToLoad = null)
+        {
+            var users = new List<BaseUserObject>();
+            if (_logEnabled) _loggerInstance.Info("Connecting to AD: {0}", _adLDAPRoot);
+            var dirRoot = new DirectoryEntry(String.Format(_adLDAPRoot, _adOU));
+            var dirUser = new DirectoryEntry(String.Format(_adLDAPRoot, ""));
+
+            var filt = "(&(objectClass=user)(objectCategory=person)(cn=" + userName + "))";
+
+
+
+            using (DirectorySearcher userSrch = new DirectorySearcher(dirUser, filt))
+            {
+
+                var resultCol = SafeFindAll(userSrch);
+                var count = 0;
+                foreach (SearchResult item in resultCol)
+                {
+                    users.Add(new BaseUserObject(GetProperty(item, "samaccountname"), GetProperty(item, "displayname"), GetProperty(item, "title"), GetProperty(item, "givenname"), GetProperty(item, "sn")));
+                    count++;
+                    if (count % 200 == 0)
+                    {
+                        if (_logEnabled) _loggerInstance.Info("At {0} users...", count);
+                    }
+                }
+            }
+
+            return users;
+        }
+
         private string GetProperty(SearchResult searchResult, string propertyName)
         {
             if (searchResult.Properties.Contains(propertyName))
@@ -308,7 +379,6 @@ namespace Koden.Utils.AD
             userObj.Homeloc = GetProperty(searchResult, "physicalDeliveryOfficeName");
             userObj.Phone = GetProperty(searchResult, "telephoneNumber");
             userObj.Mobile = GetProperty(searchResult, "mobile");
-            userObj.EmployeeID = GetProperty(searchResult, "employeeID");
             userObj.Title = GetProperty(searchResult, "title");
             userObj.Cn = GetProperty(searchResult, "cn");
             userObj.FirstName = GetProperty(searchResult, "givenname");

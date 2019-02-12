@@ -8,7 +8,7 @@
     <owners>App Dev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Common Extension Methods and MVC Helpers used in MVC Framework</description>
-    <releaseNotes>Upgrade to .Net 4.6.1</releaseNotes>
+    <releaseNotes>Upgraded NewtonSoft and Other Nuget package references</releaseNotes>
     <copyright>Koden</copyright>
     <dependencies>
       <group>
