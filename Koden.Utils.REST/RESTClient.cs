@@ -79,7 +79,7 @@ namespace Koden.Utils.REST
         }
 
         private static string _contentType = "text/xml";
-
+        private static string _acceptType = "";
         /// <summary>
         /// Gets or sets the type of the content.
         /// </summary>
@@ -92,6 +92,17 @@ namespace Koden.Utils.REST
             set { _contentType = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the type of the content.
+        /// </summary>
+        /// <value>
+        /// The type of the content.
+        /// </value>
+        public string AcceptType
+        {
+            get { return _acceptType; }
+            set { _acceptType = value; }
+        }
         /// <summary>
         /// Gets or sets the post data.
         /// </summary>
@@ -163,7 +174,11 @@ namespace Koden.Utils.REST
                 _instance = new RESTClient();
             }
             _loggerInstance = restHeader.LoggerInstance;
-            if (_loggerInstance != null) _logEnabled = true;
+            if (_loggerInstance != null)
+            {
+                _logEnabled = true;
+            }
+
             if (_logEnabled)
             {
                 _loggerInstance.Info("Instantiating REST Module:");
@@ -387,15 +402,27 @@ namespace Koden.Utils.REST
             {
                 _rootURI = endpoint;
                 Method = HTTPOperation;
-                AdditionalHeaders = new Dictionary<string, string>
-                                        {
-                                            { "Authorization", "Bearer " + loginToken.kGetValueOrDefault("access_token","") }
-                                        };
-
+                if (AdditionalHeaders == null)
+                {
+                    AdditionalHeaders = new Dictionary<string, string>();
+                }
+                else
+                {
+                    if (!AdditionalHeaders.ContainsKey("Authorization"))
+                    {
+                        AdditionalHeaders.Add("Authorization", "Bearer " + loginToken.kGetValueOrDefault("access_token", ""));
+                    }
+                }
                 if (HTTPOperation == HTTPOperation.GET || HTTPOperation == HTTPOperation.DELETE)
                 {
-                    if (returnJSON) ContentType = "application/json";
-                    else ContentType = "text/xml";
+                    if (returnJSON)
+                    {
+                        ContentType = "application/json";
+                    }
+                    else
+                    {
+                        ContentType = "text/xml";
+                    }
                 }
                 else
                 {
@@ -403,8 +430,14 @@ namespace Koden.Utils.REST
                     _postData = formData;
                 }
 
-                if (postAsJSON) ContentType = "application/json";
-                else ContentType = "application/x-www-form-urlencoded";
+                if (postAsJSON)
+                {
+                    ContentType = "application/json";
+                }
+                else
+                {
+                    ContentType = "application/x-www-form-urlencoded";
+                }
 
                 var jsonRetVal = DoRequest(apiMethod);
 
@@ -439,7 +472,11 @@ namespace Koden.Utils.REST
         /// <exception cref="ApplicationException"></exception>
         public string DoRequest(string parameters)
         {
-            if (_logEnabled) _loggerInstance.Verbose("Creating web request to: {0}", _rootURI + parameters);
+            if (_logEnabled)
+            {
+                _loggerInstance.Verbose("Creating web request to: {0}", _rootURI + parameters);
+            }
+
             HttpWebRequest request;
             string responseValue = string.Empty;
 
@@ -463,20 +500,31 @@ namespace Koden.Utils.REST
                 }
 
                 var validStatus = new List<HttpStatusCode> { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted, HttpStatusCode.NoContent };
-                if (_logEnabled) _loggerInstance.Debug("Contacting Endpoint...");
+                if (_logEnabled)
+                {
+                    _loggerInstance.Debug("Contacting Endpoint...");
+                }
+
                 using (var response = (HttpWebResponse)request.GetResponse())
                 {
                     if (!validStatus.Contains(response.StatusCode))
                     {
                         string message = String.Format("Koden Exception - Request Issues. Received HTTP {0}:\n{1}", response.StatusCode, response.StatusDescription.Replace("{", "\\{").Replace("}", "\\}"));
-                        if (_logEnabled) _loggerInstance.Error(message);
+                        if (_logEnabled)
+                        {
+                            _loggerInstance.Error(message);
+                        }
+
                         throw new ApplicationException(message);
                     }
 
                     responseValue = GetHTTPResponse(response);
                     response.Close();
                 }
-                if (_logEnabled) _loggerInstance.Debug("Response Received!");
+                if (_logEnabled)
+                {
+                    _loggerInstance.Debug("Response Received!");
+                }
             }
             catch (Exception ex)
             {
@@ -496,25 +544,41 @@ namespace Koden.Utils.REST
                 switch (_AuthType.ToUpper())
                 {
                     case "PASSWORD":  //JWT Token/AuthBearer
-                        if (_logEnabled) _loggerInstance.Debug("Authenticating using password/JWT Bearer Token (user:password): {0}", Convert.ToBase64String(Encoding.Default.GetBytes(_UserId + ":" + _Password)));
+                        if (_logEnabled)
+                        {
+                            _loggerInstance.Debug("Authenticating using password/JWT Bearer Token (user:password): {0}", Convert.ToBase64String(Encoding.Default.GetBytes(_UserId + ":" + _Password)));
+                        }
+
                         request.Headers["Authorization"] = "Bearer " + Convert.ToBase64String(Encoding.Default.GetBytes(_UserId + ":" + _Password));
 
                         break;
                     case "BASIC":
 
-                        if (_logEnabled) _loggerInstance.Debug("Authenticating using BASIC (user:password): {0}", Convert.ToBase64String(Encoding.Default.GetBytes(_UserId + ":" + _Password)));
+                        if (_logEnabled)
+                        {
+                            _loggerInstance.Debug("Authenticating using BASIC (user:password): {0}", Convert.ToBase64String(Encoding.Default.GetBytes(_UserId + ":" + _Password)));
+                        }
+
                         request.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(_UserId + ":" + _Password));
                         break;
                     case "NTLM":
                         if (_UserId.Equals("Current", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            if (_logEnabled) _loggerInstance.Debug("Authenticating using NTLM (Current User)");
+                            if (_logEnabled)
+                            {
+                                _loggerInstance.Debug("Authenticating using NTLM (Current User)");
+                            }
+
                             request.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
                             request.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
                         }
                         else
                         {
-                            if (_logEnabled) _loggerInstance.Debug("Authenticating using NTLM (user:password): {0}/********", _UserId);
+                            if (_logEnabled)
+                            {
+                                _loggerInstance.Debug("Authenticating using NTLM (user:password): {0}/********", _UserId);
+                            }
+
                             var netCreds = new NetworkCredential(_UserId, _Password);
                             CredentialCache myCache = new CredentialCache
                             {
@@ -531,8 +595,12 @@ namespace Koden.Utils.REST
             else
                 if (!string.IsNullOrEmpty(_UserKey))
             {
-                if (_logEnabled) _loggerInstance.Debug("Authenticating using BASIC (userKey): {0}", _UserKey);
-                request.Headers["Authorization"] = "Basic " + _UserKey;
+                if (_logEnabled)
+                {
+                    _loggerInstance.Debug("Authenticating using BASIC (userKey): {0}", _UserKey);
+                }
+
+                request.Headers["Authorization"] = "Bearer " + _UserKey;
             }
 
             request.ContentLength = 0;
@@ -543,7 +611,14 @@ namespace Koden.Utils.REST
             request.KeepAlive = false;
             foreach (var item in AdditionalHeaders)
             {
-                request.Headers.Add(item.Key, item.Value);
+                if (item.Key == "Accept")
+                {
+                    request.Accept = item.Value;
+                }
+                else
+                {
+                    request.Headers.Add(item.Key, item.Value);
+                }
             }
 
             request.ServicePoint.ConnectionLeaseTimeout = TimeOut * 1000;
@@ -564,11 +639,14 @@ namespace Koden.Utils.REST
             using (var responseStream = endpointResponse.GetResponseStream())
             {
                 if (responseStream != null)
+                {
                     using (var reader = new StreamReader(responseStream))
                     {
                         retVal = reader.ReadToEnd();
                         reader.Close();
                     }
+                }
+
                 responseStream.Flush();
                 responseStream.Close();
             }

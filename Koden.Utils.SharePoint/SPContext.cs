@@ -147,7 +147,7 @@ namespace Koden.Utils.SharePoint
         }
 
         /// <summary>
-        /// Contacts SharePoint and does the request.
+        /// Contacts SharePoint and does the request.    d
         /// </summary>
         /// <param name="operation">The operation.</param>
         /// <param name="uri">The URI.</param>
@@ -164,9 +164,7 @@ namespace Koden.Utils.SharePoint
             HttpWebResponse httpWebResponse;
             int retryAttempts = 1;
             string retVal;
-
-
-
+                       
             while (retryAttempts <= RetryCount)
             {
                 try

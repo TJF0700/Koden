@@ -85,3 +85,7 @@ $RECYCLE.BIN/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+/.vs/Koden.ALL/v16/Server/sqlite3/storage.ide-wal
+/.vs/Koden.ALL/v16/Server/sqlite3/storage.ide-shm
+/.vs/Koden.ALL/v16/Server/sqlite3/storage.ide
+/.vs/Koden.ALL/v16/Server/sqlite3/db.lock

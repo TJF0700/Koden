@@ -110,7 +110,7 @@ namespace Koden.Utils.REST
         {
             get
             {
-                return this.timeOut == 0 ? 10 : this.timeOut;
+                return this.timeOut == 0 ? 30 : this.timeOut;
             }
             set
             {
@@ -191,6 +191,16 @@ namespace Koden.Utils.REST
             _XML = XML;
             PostData = "";
         }
+        /// <summary>
+        /// Add a timeout! by seconds
+        /// </summary>
+        /// <param name="timeOut"></param>
+        public RESTClientAsync(int timeOut)
+        {
+            Method = HTTPOperation.GET;
+            PostData = "";
+            TimeOut = timeOut;
+        }
 
 
         /// <summary>
@@ -238,7 +248,7 @@ namespace Koden.Utils.REST
             this._UserId = userID;
             this._AuthType = authtype;
             this.TimeOut = timeOut;
-            return await DoRequestAsync(parameters);
+            return await DoRequestAsync(parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -275,7 +285,7 @@ namespace Koden.Utils.REST
                 var validStatus = new List<HttpStatusCode> { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted, HttpStatusCode.NoContent };
                 if (_logEnabled) _loggerInstance.Debug("Contacting Endpoint...");
 
-                using (var response = (HttpWebResponse)request.GetResponse())
+                using (var response = (HttpWebResponse)request.GetResponseAsync().Result)
                 {
                     if (!validStatus.Contains(response.StatusCode))
                     {
@@ -284,7 +294,7 @@ namespace Koden.Utils.REST
                         throw new ApplicationException(message);
                     }
 
-                    responseValue = await GetHTTPResponseAsync(response);
+                    responseValue = GetHTTPResponseAsync(response).Result;
 
                     response.Close();
                 }
@@ -382,7 +392,7 @@ namespace Koden.Utils.REST
             PostData = string.Format("username={0}&password={1}&company={2}&grant_type=password",
                 userID, password, company);
 
-            var jsonRetVal = await DoRequestAsync("/oauth2/token");
+            var jsonRetVal = await DoRequestAsync("/oauth2/token").ConfigureAwait(false);
             return GetTokenDictionary(jsonRetVal);
         }
 
@@ -406,7 +416,7 @@ namespace Koden.Utils.REST
             PostData = string.Format("username={0}&password={1}&grant_type=password",
                 userID, password);
 
-            var jsonRetVal = await DoRequestAsync("/oauth2/token");
+            var jsonRetVal = await DoRequestAsync("/oauth2/token").ConfigureAwait(false);
             return GetTokenDictionary(jsonRetVal);
         }
 
@@ -432,7 +442,7 @@ namespace Koden.Utils.REST
             ContentType = "application/x-www-form-urlencoded";
             PostData = string.Join("&", keyValues.Select(m => m.Key + "=" + m.Value).ToArray());
 
-            var jsonRetVal = await DoRequestAsync(endpoint);
+            var jsonRetVal = await DoRequestAsync(endpoint).ConfigureAwait(false);
             return GetTokenDictionary(jsonRetVal);
         }
 
@@ -488,7 +498,7 @@ namespace Koden.Utils.REST
                 if (postAsJSON) ContentType = "application/json";
                 else ContentType = "application/x-www-form-urlencoded";
 
-                var jsonRetVal = await DoRequestAsync(apiMethod);
+                var jsonRetVal = await DoRequestAsync(apiMethod).ConfigureAwait(false);
 
                 if (isOData)
                 {
@@ -525,7 +535,7 @@ namespace Koden.Utils.REST
             using (var responseStream = endpointResponse.GetResponseStream())
             {
 
-                await responseStream.CopyToAsync(content);
+                await responseStream.CopyToAsync(content).ConfigureAwait(false);
 
                 retVal = Encoding.UTF8.GetString(content.ToArray());
             }
