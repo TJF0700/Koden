@@ -86,7 +86,7 @@ namespace Koden.Utils.REST
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        Task<string> DoRequestAsync(string parameters);
+        Task<FWRetVal<string>> DoRequestAsync(string parameters);
         /// <summary>
         /// Does the request asynchronously.
         /// </summary>
@@ -96,7 +96,7 @@ namespace Koden.Utils.REST
         /// <param name="timeOut">The time out.</param>
         /// <param name="authtype">The authtype.</param>
         /// <returns></returns>
-        Task<string> DoRequestAsync(string parameters, string userID, string password, int timeOut, string authtype);
+        Task<FWRetVal<string>> DoRequestAsync(string parameters, string userID, string password, int timeOut, string authtype);
 
         /// <summary>
         /// Calls a RESTful API using login Token Gets the API data.

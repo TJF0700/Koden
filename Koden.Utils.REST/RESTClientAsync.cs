@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,6 +48,7 @@ namespace Koden.Utils.REST
     /// <seealso cref="System.IDisposable" />
     public class RESTClientAsync : IDisposable, IRESTClientAsync
     {
+        static HttpClient httpClient = new HttpClient();
 
         private int timeOut = 30;
         private string _rootURI { get; set; }
@@ -242,7 +244,7 @@ namespace Koden.Utils.REST
         /// <param name="timeOut">The time out.</param>
         /// <param name="authtype">The authtype.</param>
         /// <returns></returns>
-        public async Task<string> DoRequestAsync(string parameters, string userID, string password, int timeOut, string authtype)
+        public async Task<FWRetVal<string>> DoRequestAsync(string parameters, string userID, string password, int timeOut, string authtype)
         {
             this._Password = password;
             this._UserId = userID;
@@ -251,23 +253,31 @@ namespace Koden.Utils.REST
             return await DoRequestAsync(parameters).ConfigureAwait(false);
         }
 
+
         /// <summary>
         /// Makes the request asynchronously.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
-        public async Task<string> DoRequestAsync(string parameters)
+        public async Task<FWRetVal<string>> DoRequestAsync(string parameters)
         {
+            var retVal = new FWRetVal<string>
+            {
+                MsgType = FWMsgType.Success,
+                Value = "Success"
+            };
+
             if (_logEnabled) _loggerInstance.Verbose("Creating web request to: {0}", _rootURI + parameters);
             HttpWebRequest request;
             string responseValue = string.Empty;
 
             try
             {
-                request = (HttpWebRequest)WebRequest.Create(_rootURI + parameters);
+                request = WebRequest.Create(_rootURI + parameters) as HttpWebRequest;
                 request = ModifyHeaders(request);
-
+               // request.Timeout=40000;
+                //request.ReadWriteTimeout = 50000;
 
                 if (!string.IsNullOrEmpty(PostData) && (Method == HTTPOperation.POST || Method == HTTPOperation.PUT || Method == HTTPOperation.PATCH || Method == HTTPOperation.MERGE))
                 {
@@ -285,21 +295,23 @@ namespace Koden.Utils.REST
                 var validStatus = new List<HttpStatusCode> { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted, HttpStatusCode.NoContent };
                 if (_logEnabled) _loggerInstance.Debug("Contacting Endpoint...");
 
-                using (var response = (HttpWebResponse)request.GetResponseAsync().Result)
+                //HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+
+
+                WebResponse response = await request.GetResponseAsync().ConfigureAwait(false);
+
+                using (Stream respStream = response.GetResponseStream())
                 {
-                    if (!validStatus.Contains(response.StatusCode))
-                    {
-                        string message = String.Format("Koden Exception - Request Issues. Received HTTP {0}:\n{1}", response.StatusCode, response.StatusDescription.Replace("{", "\\{").Replace("}", "\\}"));
-                        if (_logEnabled) _loggerInstance.Error(message);
-                        throw new ApplicationException(message);
-                    }
-
-                    responseValue = GetHTTPResponseAsync(response).Result;
-
-                    response.Close();
+                    StreamReader reader = new StreamReader(respStream);
+                    responseValue = reader.ReadToEnd();
                 }
-                if (_logEnabled) _loggerInstance.Debug("Response Received!");
             }
+            catch (WebException webex)
+            {
+                throw webex;
+            }
+
+         
             catch (Exception ex)
             {
                 throw ex;
@@ -308,7 +320,10 @@ namespace Koden.Utils.REST
             {
                 request = null;
             }
-            return responseValue;
+            
+            retVal.Record = responseValue;
+
+            return retVal;
         }
 
         private HttpWebRequest ModifyHeaders(HttpWebRequest request)
@@ -393,7 +408,7 @@ namespace Koden.Utils.REST
                 userID, password, company);
 
             var jsonRetVal = await DoRequestAsync("/oauth2/token").ConfigureAwait(false);
-            return GetTokenDictionary(jsonRetVal);
+            return GetTokenDictionary(jsonRetVal.Record);
         }
 
 
@@ -417,7 +432,7 @@ namespace Koden.Utils.REST
                 userID, password);
 
             var jsonRetVal = await DoRequestAsync("/oauth2/token").ConfigureAwait(false);
-            return GetTokenDictionary(jsonRetVal);
+            return GetTokenDictionary(jsonRetVal.Record);
         }
 
         /// <summary>
@@ -443,7 +458,7 @@ namespace Koden.Utils.REST
             PostData = string.Join("&", keyValues.Select(m => m.Key + "=" + m.Value).ToArray());
 
             var jsonRetVal = await DoRequestAsync(endpoint).ConfigureAwait(false);
-            return GetTokenDictionary(jsonRetVal);
+            return GetTokenDictionary(jsonRetVal.Record);
         }
 
         private Dictionary<string, string> GetTokenDictionary(
@@ -502,18 +517,34 @@ namespace Koden.Utils.REST
 
                 if (isOData)
                 {
-                    var tmpObj = JsonConvert.DeserializeObject<ODataResponse<T>>(jsonRetVal);
+                    var tmpObj = JsonConvert.DeserializeObject<ODataResponse<T>>(jsonRetVal.Record);
                     retVal.Records = tmpObj.Value;
                 }
                 else
                 {
-                    retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal);
+                    retVal.Record = JsonConvert.DeserializeObject<T>(jsonRetVal.Record);
+                }
+            }
+            catch (WebException webex)
+            {
+                WebResponse errResp = webex.Response;
+                if (errResp == null)
+                {
+                    retVal.MsgType = FWMsgType.Error;
+                    retVal.Value = webex.kGetAllMessages();
+                }
+                using (Stream respStream = errResp.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(respStream);
+                    var responseValue = reader.ReadToEnd();
+                    retVal.MsgType = FWMsgType.Error;
+                    retVal.Value = responseValue;
                 }
             }
             catch (Exception ex)
             {
                 retVal.MsgType = FWMsgType.Error;
-                retVal.Value = "Error: " + ex.kGetAllMessages();
+                retVal.Value = ex.kGetAllMessages();
             }
 
 

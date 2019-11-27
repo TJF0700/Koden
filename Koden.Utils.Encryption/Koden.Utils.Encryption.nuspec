@@ -8,7 +8,7 @@
     <owners>App Dev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Common Utilities for Encryption techniques</description>
-    <releaseNotes>Upgraded NewtonSoft and Other Nuget package references</releaseNotes>
+    <releaseNotes>upgraded REST to return Task&lt;FWRetVal&lt;string&gt;&gt;</releaseNotes>
     <copyright>Koden</copyright>
   </metadata>
 </package>
