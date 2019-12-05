@@ -140,9 +140,9 @@ namespace Koden.Utils.AD
         /// </summary>
         /// <param name="groupName">Name of the group.</param>
         /// <returns></returns>
-        public List<String> GetGroups(string groupName)
+        public List<GroupObject> GetGroups(string groupName)
         {
-            var groups = new List<String>();
+            var groups = new List<GroupObject>();
             if (_logEnabled) _loggerInstance.Info("Connecting to AD: {0}", _adLDAPRoot);
             var dirRoot = new DirectoryEntry(String.Format(_adLDAPRoot, _adOU));
             var dirGroup = new DirectoryEntry(String.Format(_adLDAPRoot, ""));
@@ -156,7 +156,13 @@ namespace Koden.Utils.AD
                 var count = 0;
                 foreach (SearchResult item in resultCol)
                 {
-                    groups.Add(GetProperty(item, "cn"));
+                    groups.Add(
+                        new GroupObject (
+                            GetProperty(item, "cn"),
+                            GetProperty(item, "groupType"),
+                            GetProperty(item, "mail"),
+                            GetProperty(item, "description")
+                        ));
                     count++;
                     if (count % 200 == 0)
                     {
